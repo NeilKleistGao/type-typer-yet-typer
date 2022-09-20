@@ -1,2 +1,2 @@
-# type-typed-and-yet-typer
+# type-typed-yet-typer
 A simple brochure about type systems
