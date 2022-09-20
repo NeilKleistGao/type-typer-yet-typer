@@ -1,0 +1,19 @@
+name: Compilation CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: xu-cheng/latex-action@v2
+      with:
+        root_file: "main.tex"
+        glob_root_file: true
