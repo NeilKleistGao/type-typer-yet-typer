@@ -1,4 +1,62 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
-  
+  \section{类型与编程语言}
+  \subsection{软件工程师们是如何解决问题的}
+
+  \indent 欢迎来到软件工程的世界！在这里，请允许我假定你已经掌握了一些基本的编程技术（如果还没有的话，为什么不现在就开始学习呢？），
+  例如C，C\#，或者Python编程。无论你掌握了哪一门语言，你都已经具备了编写程序的能力，可以开发属于自己的软件了！让我在这里恭喜你！
+
+  \indent 等等！你我其实都心知肚明：这仅仅只是一个开始（如果你确实是一个新晋的程序员的话）。
+  你的程序也许并不像你想象中那么完美，比如下面的这个小小的计算程序：
+
+\begin{lstlisting}[language=python]
+area = 45
+width = input("please input the width of rectangle:")
+print(area / int(width))
+\end{lstlisting}
+
+  \indent 这是一个非常简单的程序，仅仅只包含3行代码。它可以帮助你计算“当一个矩形的面积为45，宽为width时，矩形的高是多少”。
+  但是这样的程序存在着非常严重的缺陷：当用户输入0时，程序将会崩溃（0不能作为除数！）：
+
+\begin{lstlisting}
+Traceback (most recent call last):
+File "script.py", line 5, in <module>
+  print(area / int(width))
+ZeroDivisionError: division by zero
+
+Exited with error status 1
+\end{lstlisting}
+
+  \indent 甚至更糟糕！用户可能根本不会输入一个数字（也许不小心输入了家庭住址）！
+  这些情况都会导致我们的程序崩溃，后续的逻辑根本不会执行，从而让用户为此抓狂！
+  事实上，不仅仅是我们的程序会遇到这样的问题。很多知名的大型软件（比如Windows系统）的开发者，
+  他们也需要不停地思考：怎么样才能让软件更加“好用”呢？
+
+  \indent 这里的“好用”一词实属模糊，不同的人对于“好用”的定义是完全不一样的。
+  不过，我们的软件还是应该至少保证两点：按照我们的预期产生输出，并且程序不要崩溃。
+  如果程序的输出是错的（比如告诉你$16 \times 55 = 28$），我们的用户压根没法指望着靠这个程序完成什么工作；
+  如果程序在运行过程中彻底崩溃了，用户正在进行的工作将付之东流（应该不会有人在Word文档崩溃的时候才发现自己写了两小时的报告忘记保存了吧？）。
+
+  \indent 为此，软件工程师们（以及众多学术界的大牛们）想尽一切办法，提出了一系列的措施，
+  目的就是为了减少程序员在开发过程中犯错的次数，从而使用户最终拿到的软件更加可靠。
+  这一系列的措施可以大致归纳为三类：\cite{sf}
+  \begin{itemize}
+    \item 错误终归是由于人引发的。如果不用熬夜甚至通宵写代码的话，代码的正确性就不会依赖于血液中咖啡因的浓度了吧。因此，合理安排项目进度，积极与用户沟通等方法都有助于减少软件中错误的产生。这样的方法我们称之为项目管理；
+    \item 如果老的代码是可靠的，那么只需要“复用”以前的工作就好了吧！工程师们通常会设计出一些“模式”，通过使用这些模式来组织代码，后人就能方便地复用这些成果，从而减少新产生的错误的数量。
+    \item 会产生错误就是由于程序员写代码的时候太懒散了！多给他们立一些规矩吧！比如“这个地方不允许这样写”，“这个地方你必须输出这个”……这些规矩最后会被反应到编程语言、测试框架或者验证程序上。
+  \end{itemize}
+
+  \indent 对于这些措施，我们没有那么多的精力逐个阐述。我们将把注意力放在最后一类：编程语言本身。
+  更进一步地，我们将主要讨论编程语言中的类型系统。
+
+  \subsection{编程语言中的类型}
+  TODO
+  \subsection{不同门派的编程语言}
+  TODO
+  \subsection{类型系统好处都有啥？}
+  TODO
+
+  \begin{thebibliography}{1}
+    \bibitem{sf} Pierce, B., Amorim, A., Casinghino, C., Gaboardi, M., Greenberg, M., Hriţcu, C., Sjöberg, V. and Yorgey, B., 2018. Software Foundations. pp.1-2.
+  \end{thebibliography}
 \end{document}
