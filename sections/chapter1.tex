@@ -145,17 +145,58 @@ float_of_int(3) *. 3.14;;
   \indent 类型系统中有一个经典的问题：如何判断两个类型是否相同？
   这个问题通常有两种答案：名义类型（Nominal Typing）和结构类型（Structural Typing）。
 
-  TODO
+  \indent 对于名义类型，两个类型相等当且仅当类型名称相等。这种情况在静态语言中更加常见：
+
+\begin{lstlisting}[language=c++]
+struct A {
+  int a;
+};
+
+struct B {
+  int a;
+};
+
+// ...
+A aa = B(); // error!
+\end{lstlisting}
+
+  \indent 上面的C++代码中，尽管两个结构体所包含的字段完全相同，A和B依然是两个不同的类型。
+  结构类型与之相反：只要二者在结构上一致，那么两个类型相同。这在一些动态语言中更加常见，例如TypeScript：
+
+\begin{lstlisting}
+class A {
+  a: string
+}
+
+class B {
+  a: string
+}
+
+const aa: A = new B() // OK!
+\end{lstlisting}
 
   \subsubsection*{类型推断}
-  TODO
+  \indent 至此，我们已经看过了大量的代码，以及代码中的类型。无论是写作$int x;$或者是$x: int$。
+  这里的$int$都是需要程序员指定的，我们管它叫做类型标记（Type Annotation）。
+  总是要不厌其烦地添加这些标记是一件麻烦事。为了减少程序员的工作量，一些类型系统能够自发地识别一个表达式的类型。
+  例如$x = 2 * 3.14$，类型系统能够自动推断出$x$的类型是浮点数。
+  目前，主流的编程语言大多数都或多或少地支持了类型推断：C++可以使用auto关键字，
+  TypeScript可以直接省去类型一部分类型标记（不是全部，函数参数就不行）……
+
+  \indent 等等！为代码添加类型标记，真的是一件很麻烦而且不值得的事情吗？
+  至少在工业界中，很多人给出了不同的声音：添加类型标记有的时候可以增加代码的可读性，
+  这对于代码后期的维护是至关重要的。从这个角度来看，类型推断其实只是一个可有可无的存在。 \cite{zh}
+
+  \indent 尽管这是一个开放性的问题，我们在后续的内容中仍将假定“类型推断是很重要的一部分”，
+  并介绍推断的原理与相关的算法。
 
   \subsection{类型系统好处都有啥？}
   TODO
 
-  \begin{thebibliography}{3}
+  \begin{thebibliography}{4}
     \bibitem{sf} Pierce, B., Amorim, A., Casinghino, C., Gaboardi, M., Greenberg, M., Hriţcu, C., Sjöberg, V. and Yorgey, B., 2018. Software Foundations. pp.1-2.
     \bibitem{typewiki} Zh.wikipedia.org. 2022. 型別系統 - 维基百科，自由的百科全书.[online] Available at: <\url{https://zh.wikipedia.org/wiki/%E9%A1%9E%E5%9E%8B%E7%B3%BB%E7%B5%B1}> [Accessed 26 September 2022].
     \bibitem{gradualwiki} En.wikipedia.org. 2022. Gradual typing - Wikipedia. [online] Available at: <\url{https://en.wikipedia.org/wiki/Gradual_typing}> [Accessed 26 September 2022].
+    \bibitem{zh} Zhihu.com. 2021. 如何看待王垠关于Hindley-Milner类型系统的评价? - 知乎. [online] Available at: <\url{https://www.zhihu.com/question/447455754}> [Accessed 26 September 2022].
   \end{thebibliography}
 \end{document}
