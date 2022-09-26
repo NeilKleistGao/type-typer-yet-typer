@@ -50,13 +50,112 @@ Exited with error status 1
   更进一步地，我们将主要讨论编程语言中的类型系统。
 
   \subsection{编程语言中的类型}
-  TODO
+  \indent “物以类聚，人以群分”（出自《战国策·齐策三》）。分类在不同领域不同学科都有着不俗的影响力。在计算机和软件工程中亦是如此。
+  即便现在你可能还不知道类型系统是什么，但是编程中的遇到或使用的各种“类型”的变量，想必你已经了如指掌了：
+  
+\begin{lstlisting}[language=c]
+int a = 0;
+float b = 0.0f;
+double c = 0.0;
+char d = '0';
+// ...
+\end{lstlisting}
+
+  \indent 这段C语言的代码为我们展现了四种不同类型的变量：整型、浮点型、双精度浮点型和字符类型。
+  这些类型在计算机中有着不同的存储方式，可以对它们进行不同的运算处理，甚至可以将它们互相转换！
+  事实上，类型系统的任务就是负责将代码中的表达式归类，并规定如何操作这些类型，类型之间如何相互作用。\cite{typewiki}
+
   \subsection{不同门派的编程语言}
+  \indent 不同的编程语言，其所拥有的类型系统也会有很大的不同。这里我们简单地举几个例子。
+
+  \subsubsection*{静态类型与动态类型}
+  \indent 在上一节中我们看到的C语言，就是一个典型的静态类型的例子。“静态”一词意味着检查是在编译期执行的。
+  例如这样的一段代码：
+
+\begin{lstlisting}[language=c]
+float a = "abc";
+\end{lstlisting}
+
+  \indent 编译器会友好地提醒你：你在试图用一个字符数组初始化一个浮点数，而这两个类型是完全不兼容的！
+  你的程序将无法被编译，也就不会有可执行文件（或者链接库等其他二进制产物）生成。
+
+  \indent 与之相对的则是动态类型。“动态”一词意为着对类型的检查要等到运行时才会被执行。
+  这样的类型系统会对运行时的代码产生一定的性能负担（除了执行用户的代码外，还要随时检查类型），
+  但其相较于静态类型的语言有着更高的灵活度，因此被大量用于脚本语言中，比如Python：
+
+\begin{lstlisting}[language=python]
+print("Hello, World!" & 2)
+\end{lstlisting}
+
+  运行这段代码，解释器会告诉你：无法将字符串和整数类型这样运算。而你的代码的执行之旅也到此结束。
+  不过，如果这段代码没有被执行到，解释器是不会有任何的意见的：
+
+\begin{lstlisting}[language=python]
+if False:
+	print("Hello, World!" & 2);
+else:
+	print("Yes!")
+\end{lstlisting}
+
+  \indent 除此之外，还有一些语言（比如C\#）秉持着中庸的思想，认为同时支持静态类型检查和动态类型检查是一个不错的选择。
+  这样的类型系统被称为渐进类型（Gradual Typing）。 \cite{gradualwiki} 在C\#中，绝大多数的类型依然是静态的。
+  但是其提供了一个dynamic关键字。使用dynamic修饰的变量将会被视作动态类型。
+
+  \subsubsection*{强类型与弱类型}
+  \indent 尽管大部分语言都对整数和浮点数做了区分（int和float），但是大家在进行计算的时候似乎并没有做过多的区分：
+  一个整数可以简单地与一个浮点数（甚至是双精度的浮点数）进行四则运算，从而得到另一个浮点数。
+  这明明是两种不同的类型！我们的类型系统坏掉了吗？
+
+  \indent 事实上，这是一种名为“隐式转换”（Implicit Conversion）的机制在起作用。类型系统在看到一个整数和浮点数同时运算后，
+  做出了“将整数转化成浮点数然后再试试吧”的决策，而这个决策并没有直接告知程序员。
+  一个类型系统的强弱程度，取决于有多少类型可以在这样的“潜规则”下进行相互转换。
+
+  \indent 隐式转换很方便，但是也会带来一系列的问题。C语言就是一个非常典型的弱类型语言，其允许一个整数被隐式转换到布尔值上，具体的转换规则为：
+  \begin{itemize}
+    \item 如果这个整数为0，那么转换结果为false
+    \item 否则，转换结果为true
+  \end{itemize}
+
+  \indent 在这样的规则下，隐式转换为下面的代码埋下隐患：
+
+\begin{lstlisting}[language=c]
+int i = 0;
+int j = 10;
+while (i = j) {
+  // do something
+  ++i;
+}
+\end{lstlisting}
+
+  \indent 可怜的程序员！在经历了通宵的加班后，他并没有发现他将$==$写成了$=$。
+  而编译器会自动将$i = j$返回的整数转化为布尔值，从而让这段错误的代码通过了编译！
+  用户在拿到程序后，就会发现程序卡死在了某个地方（就是这个死循环）。
+  如果是一门强类型的语言，编译器（或者解释器）也许就会提示：不能将整数视作布尔值！
+  这个问题就能迎刃而解。
+
+  \indent 当然了，类型过“强”也不见得是一件好事。在OCaml语言中，浮点运算有“专门”的运算符。
+  这意味着在我们的视角中$3 \times 3.14$是无比寻常的事，但是在OCaml中，
+  你必须强制将整数转换为浮点数，并使用浮点专用的运算符：
+
+\begin{lstlisting}[language=ml]
+float_of_int(3) *. 3.14;;
+\end{lstlisting}
+
+  \subsubsection*{名义类型与结构类型}
+  \indent 类型系统中有一个经典的问题：如何判断两个类型是否相同？
+  这个问题通常有两种答案：名义类型（Nominal Typing）和结构类型（Structural Typing）。
+
   TODO
+
+  \subsubsection*{类型推断}
+  TODO
+
   \subsection{类型系统好处都有啥？}
   TODO
 
-  \begin{thebibliography}{1}
+  \begin{thebibliography}{3}
     \bibitem{sf} Pierce, B., Amorim, A., Casinghino, C., Gaboardi, M., Greenberg, M., Hriţcu, C., Sjöberg, V. and Yorgey, B., 2018. Software Foundations. pp.1-2.
+    \bibitem{typewiki} Zh.wikipedia.org. 2022. 型別系統 - 维基百科，自由的百科全书.[online] Available at: <\url{https://zh.wikipedia.org/wiki/%E9%A1%9E%E5%9E%8B%E7%B3%BB%E7%B5%B1}> [Accessed 26 September 2022].
+    \bibitem{gradualwiki} En.wikipedia.org. 2022. Gradual typing - Wikipedia. [online] Available at: <\url{https://en.wikipedia.org/wiki/Gradual_typing}> [Accessed 26 September 2022].
   \end{thebibliography}
 \end{document}
