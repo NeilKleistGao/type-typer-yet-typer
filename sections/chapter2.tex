@@ -51,9 +51,55 @@ else {
   
   \indent 编程语言作为另一类“语言”（另类在我们用它和计算机沟通而不是和人沟通），
   是否可以用类似的方法来理解呢？答案是肯定的。
-  在计算机科学中，编程语言的语法（syntax）\footnote[1]{注：这里的“语法”与自然语言的语法仍有很大的差别。自然语言的语法包括句法、词汇形态学和音系学\cite{grammar}，而编程语言中的语法其实仅指句法。因此这里的英文是syntax而不是grammar。}
+  在计算机科学中，编程语言的语法（syntax）\footnote[1]{注：这里的“语法”与自然语言的语法仍有很大的差别。自然语言的语法包括句法、词汇形态学和音系学\cite{grammar}，而编程语言中的语法其实仅指句法。因此这里的英文是syntax而不是grammar。尽管自然语言课程上我们所学的也是句法，但基于大量老师喜欢使用grammar来表示”这堂课是语法课“，我们在上文也依旧沿用grammar一词。}
   包含一系列的语法规则，
   这些规则规定了符号如何进行排列，从而得到有意义的计算机程序语句或表达式。\cite{syntaxwiki}
+
+  \indent 本章开头给了一个C语言中if语句的非形式化描述。
+  现在，我们用一个更形式化的方式来表示它：
+
+  $$
+  Sentence ::= \\
+  if(Expr)\{ Sentence^*\} \\
+  else\,if(Expr)\{Sentence^*\} \\
+  else\{Sentence^*\}
+  $$ %TODO: 换行
+
+  \indent 这种表示形式被称为巴克斯范式（Backus Normal Form）。
+  这种语法被称为上下文无关语法。\cite{bnfwiki}
+  之所以被叫做“上下文无关”，是因为语法规则左侧的$Sentence$前后（上文和下文）均没有其他的符号，
+  即它不关心自己前后会出现什么样的内容，并始终通过这个规则来产生具体的句子。\cite{cfgwiki}
+  对于自然语言来说，这样的语法可能并不足以表达，不过对于编程语言来说，这样简单的语法刚刚好。
+
+  \indent 上面的语法规则中出现了一个$Expr$，它表示一个表达式。
+  显然，表达式也应该有一个自己的语法规则，例如两个表达式相加或者相减应该也是一个表达式。
+  因此，我们可以这样写：
+
+  $$Expr ::= num\,|\,Expr + Expr\,|\,Expr - Expr$$
+
+  \indent 我想你应该已经开始头疼了。出现了大量的符号，而我们还没有做任何的解释！
+  不过值得庆幸的是，这两个例子已经覆盖了几乎所有你需要知道的上下文无关文法和巴克斯范式有关的知识了。
+  现在我们就开始进行逐一解释\cite{bnfwiki} \cite{cfgwiki}：
+
+  \begin{itemize}
+    \item 巴克斯范式使用 $::=$ 来描述语法规则。$A ::= \beta$所表示的含义是：符号$A$所可以推导出的内容是$B$，即你可以将句子中的$A$替换为$\beta$；
+    \item 符号$A$必须“可以继续推导”，例如上面的$Sentence$或者$Expr$。这样可以继续推导的符号我们称之为非终结符；
+    \item 反之，像$if$这样的关键字或者$num$这样的数字字面量，他们本身不可以再进行任何的推导，这样的符号称之为终结符\footnote[1]{你可能会觉得奇怪，$num$明明还可以推导出$1, 2, \dots$这些数字，为什么它是终结符？事实上，$num = 1, 2, \dots$这个过程在计算机科学中被称作词法分析，是一个先于语法分析的过程。因此在语法中无论是怎么样的数字，我们都认为它们是$num$。}；
+    \item 我们使用首字母大写来表示一个符号是非终结符，用首字母小写来表示终结符，用希腊字母来表示任意的符号串（只有终结符、只有非终结符或者二者兼有）
+    \item $\alpha \beta$表示将两个符号串拼接在一起
+    \item $\alpha^*$表示$\alpha$可以在这个位置出现任意次（0次或者多次）
+    \item $\alpha\,|\,\beta$表示这里既可以推导出$\alpha$，也可以推导出$\beta$，但不能是二者同时；
+    \item 当一个符号串可以由某个起始的非终结符（一般写作$S$）根据语法规则推导得到，我们称这个符号串是满足该语法的。
+  \end{itemize}
+
+  \indent 事实上，所有编程语言都会有一套这样的语法规则。
+  编译器/解释器会根据这套规则分析给定的代码是否满足要求，无法满足要求的代码会被拒绝编译/执行。
+  例如$Expr$，我们可以根据语法规则$Expr ::= Expr + Expr$得到$Expr + Expr$。
+  再根据$Expr ::= num$，从而得到$num + num$。因此，类似于$5 + 6$的代码是一个合法的表达式。
+  反之，你无法通过这一系列的规则得到$5\,6+++$这样的代码，因此编译器/解释器会向你提示代码出错。
+
+  \indent 有关于语法分析的内容还有很多，例如递归消除，语法歧义等等。
+  出于简化的目的，我们在这里不再阐述这些内容。如果你对此感兴趣，可以参考《编译原理（Compilers: Principles, Techniques, and Tools）》这本书中的内容。
 
   \subsection{如果只有语法的话……}
   % TODO
@@ -61,9 +107,14 @@ else {
   \subsection{操作语义（Operational Semantics）}
   % TODO
 
-  \begin{thebibliography}{3}
+  \subsection{实例学习：一个只有整数加减法的语言}
+  % TODO
+
+  \begin{thebibliography}{5}
     \bibitem{edu} 知乎专栏. 2018. 浅谈国内高校编程语言教育. [online] Available at: <\url{https://zhuanlan.zhihu.com/p/43914842}> [Accessed 2 October 2022].
     \bibitem{syntaxwiki} En.wikipedia.org. 2022. Syntax (programming languages) - Wikipedia. [online] Available at: <\url{https://en.wikipedia.org/wiki/Syntax_(programming_languages)}> [Accessed 2 October 2022].
     \bibitem{grammar} 王, 力., 2015. 中国语法理论. 中华书局, p.6.
+    \bibitem{bnfwiki} Zh.wikipedia.org. 2020. 巴科斯范式 - 维基百科，自由的百科全书. [online] Available at: <\url{https://zh.wikipedia.org/zh-hans/%E5%B7%B4%E7%A7%91%E6%96%AF%E8%8C%83%E5%BC%8F}> [Accessed 2 October 2022]. 
+    \bibitem{cfgwiki} Zh.wikipedia.org. 2021. 上下文无关文法 - 维基百科，自由的百科全书. [online] Available at: <\url{https://zh.wikipedia.org/zh-hans/%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E6%96%87%E6%B3%95}> [Accessed 2 October 2022].
   \end{thebibliography}
 \end{document}
