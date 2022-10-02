@@ -8,9 +8,6 @@
 if (condition) {
   // do something
 }
-else if (another condition) {
-  // do something
-}
 else {
   // do something
 }
@@ -59,11 +56,8 @@ else {
   现在，我们用一个更形式化的方式来表示它：
 
   $$
-  Sentence ::= \\
-  if(Expr)\{ Sentence^*\} \\
-  else\,if(Expr)\{Sentence^*\} \\
-  else\{Sentence^*\}
-  $$ %TODO: 换行
+  Sentence ::= if(Expr)\{ Sentence^*\} else\{Sentence^*\}
+  $$
 
   \indent 这种表示形式被称为巴克斯范式（Backus Normal Form）。
   这种语法被称为上下文无关语法。\cite{bnfwiki}
