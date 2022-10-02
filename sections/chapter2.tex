@@ -1,14 +1,69 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
   \section{如何描述一门编程语言？}
-  % TODO: 简短的介绍
+  \indent 到目前为止，我们都是在以一种非形式化的方式来描述某一门编程语言，
+  就像我们在大部分编程书籍上可以看到的那样：
 
-  \subsection{词法和语法}
+\begin{lstlisting}[language=c]
+if (condition) {
+  // do something
+}
+else if (another condition) {
+  // do something
+}
+else {
+  // do something
+}
+\end{lstlisting}
+
+  \indent 这固然很好！非形式化的描述直观易懂。
+  非常可惜的是：非形式化的描述在我们后续的内容中并不好使。
+  为了严格证明我们所构造的类型系统的“正确性”（何为“正确的”类型系统，我们会在之后的章节中解释），
+  我们需要使用形式化的方式来描述编程语言，即：用更“数学”的方式表示“这段代码要做什么”。
+
+  \indent 尽管这本小册子将“避重就轻”，为大家省去大量的证明工作，
+  了解这些形式化的语言仍然很有必要！
+  这些知识可以帮助你理解你所学习和使用的编程语言：例如语言的特性和用法，
+  编译器/解释器/运行时环境的原理，等等。\cite{edu}
+  因此，我们将花一整章来讨论编程语言的形式化描述。
+  为了让这些理论知识更加容易被接受，我们将从小学的语文课开始。
+
+  \subsection{语言的语法}
+  \indent 想象一下你回到了你的童年！你正坐在小学的教室里，
+  老师正在教你理解一个很长很长的句子。
+  在理解句子之前，老师一定会先教给你三样东西：主语、谓语和宾语。
+  
+  \indent 没错！对于一门自然语言来说，一个简单的句子通常由这三个元素构成。
+  无论是汉语、英语或者其他语言：
+
+  \begin{itemize}
+    \item 我（主语）打断了（谓语）他的动作（宾语）。
+    \item It（主语） is（谓语） a disaster（宾语）!
+    \item ……
+  \end{itemize}
+
+  \indent 在语文老师（也许还有英语老师）的帮助下，
+  我们得到了一个结论：一个句子可以通过主语谓语宾语的拼接组成。
+  这就是一门语言的语法（grammar）。
+  而上面的“主谓宾结构”构成了一条语法规则：
+
+  $$Sentence = (Subject) (Verb) (Object)$$
+  
+  \indent 编程语言作为另一类“语言”（另类在我们用它和计算机沟通而不是和人沟通），
+  是否可以用类似的方法来理解呢？答案是肯定的。
+  在计算机科学中，编程语言的语法（syntax）\footnote[1]{注：这里的“语法”与自然语言的语法仍有很大的差别。自然语言的语法包括句法、词汇形态学和音系学\cite{grammar}，而编程语言中的语法其实仅指句法。因此这里的英文是syntax而不是grammar。}
+  包含一系列的语法规则，
+  这些规则规定了符号如何进行排列，从而得到有意义的计算机程序语句或表达式。\cite{syntaxwiki}
+
+  \subsection{如果只有语法的话……}
   % TODO
 
-  \subsection{语言的语义}
+  \subsection{操作语义（Operational Semantics）}
   % TODO
 
-  \begin{thebibliography}{0}
+  \begin{thebibliography}{3}
+    \bibitem{edu} 知乎专栏. 2018. 浅谈国内高校编程语言教育. [online] Available at: <\url{https://zhuanlan.zhihu.com/p/43914842}> [Accessed 2 October 2022].
+    \bibitem{syntaxwiki} En.wikipedia.org. 2022. Syntax (programming languages) - Wikipedia. [online] Available at: <\url{https://en.wikipedia.org/wiki/Syntax_(programming_languages)}> [Accessed 2 October 2022].
+    \bibitem{grammar} 王, 力., 2015. 中国语法理论. 中华书局, p.6.
   \end{thebibliography}
 \end{document}
