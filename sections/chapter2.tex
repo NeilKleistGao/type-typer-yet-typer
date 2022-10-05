@@ -44,7 +44,54 @@ else {
   这就是一门语言的语法（grammar）。
   而上面的“主谓宾结构”构成了一条语法规则：
 
-  $$Sentence = (Subject) (Verb) (Object)$$
+  $$Sentence ::= (Subject) (verb) (Object)$$
+
+  \indent 这里，我们使用符号$::=$来表示一个语法的推导规则。
+  这样的表示形式被称之为巴克斯范式（Backus Normal Form）。\cite{bnfwiki}
+  如果我们要判断一堆符号是否可以满足句子的语法，我们有两种方法：
+
+  \begin{itemize}
+    \item 推导：我们从$Sentence$符号出发，寻找合适的语法规则，不断推导出新的符号，直到这些符号与我们给出的符号一致，此时我们认为我们的符号串是满足该语法的；
+    \item 规约：规约相当于推导的逆运算。我们从已有的符号串出发，寻找合适的语法规则，将符号串合并为一个单一的符号。如果最终我们可以将这些符号合并为$Sentence$，则说明这些符号串是满足该语法的。
+  \end{itemize}
+
+  \indent 为了便于理解，这里我们给出一个推导的例子。
+
+  \subsubsection*{例子：使用推导的方式检查英语语法}
+    \indent 我们这里就以刚刚的"It is a disaster"为例。
+    在开始检查之前，我们需要先将语法规则给出：
+
+    \begin{itemize}
+      \item $Sentence ::= Subject\quad verb\quad Object$
+      \item $Subject ::= pronoun$
+      \item $Object ::= article noun$
+      \item $Object ::= pronoun$
+    \end{itemize}
+
+    \indent 你可能已经发现了：有些符号的首字母是大写的（如$Subject$）；
+    有些符号的首字母是小写的（如$verb$）。
+    我们用这种方式区分两类不同的符号：非终结符和终结符。
+    非终结符，即字面意义上的“不会中止的符号”。
+    非终结符可以出现在语法规则的左侧，并产生一些其他的符号。
+    在语法规则中，我们通常用首字母大写的方式表示“这是一个非终结符”。
+
+    \indent 与之相反，非终结符是不可再进行推导的。
+    你也许会好奇：冠词（$article$）难道不是可以推导成具体的词汇（a, an和the）吗？
+    这里我们省略了一个步骤，叫做词法分析（Lexical Analysis）。
+    词法规则可以帮助我们将具体的单词转化为语法分析中所使用的符号。
+
+    \indent 好了！让我们开始推导吧！
+    首先我们需要从$Sentence$开始。根据语法规则，我们只能推导出$Subject\quad verb\quad Object$（我们别无选择！）。
+    下一步，我们可以再使用规则$Subject ::= pronoun$，从而得到$pronoun\quad verb\quad Object$。
+    此时的$pronoun$和$verb$已经是终结符了！我们可以将它们分别与“It”和“is”对应上。
+
+    \indent 下一步对于我们来说有些困难：$Object$符号拥有两种不同的推导规则。
+    我们必须在二者之间做出抉择。通过对句子的观察，我们发现后面的部分出现了冠词“a”。
+    这下就非常明了了！我们的宾语是带有一个冠词的。因此，我们选择规则 $Object ::= article noun$而不是$Object ::= pronoun$。
+    最终，我们将$article$与“a”，$noun$与“disaster”对应，证实了这个句子是符合语法的。
+
+    \indent 你也可以尝试一下逆向的规约。这会稍有难度。
+    \newline
   
   \indent 编程语言作为另一类“语言”（另类在我们用它和计算机沟通而不是和人沟通），
   是否可以用类似的方法来理解呢？答案是肯定的。
@@ -101,7 +148,7 @@ else {
   \subsection{操作语义（Operational Semantics）}
   % TODO
 
-  \subsection{实例学习：一个只有整数加减法的语言}
+  \subsection{实例：一个只有整数加减法的语言}
   % TODO
 
   \begin{thebibliography}{5}
