@@ -149,7 +149,40 @@ else {
   出于简化的目的，我们在这里不再阐述这些内容。如果你对此感兴趣，可以参考《编译原理（Compilers: Principles, Techniques, and Tools）》这本书中的内容。
 
   \subsection{如果只有语法的话……}
-  % TODO
+  \indent 我们已经知道如何描述一门语言的语法了！
+  现在我们可以开始讨论类型系统了吗？
+
+  \indent 很遗憾，还不能——因为语法不是一门语言的全部。
+
+  \indent 回到自然语言的例子上来，
+  让我们讨论一个非常现实的问题：满足语法的句子就是好的句子吗？
+  作为参考，以下是一些“满足语法规则”的句子：
+
+  \begin{itemize}
+    \item 我想喝咖啡。
+    \item 你不应该这样做。
+    \item 豆腐正在舔奶牛。
+  \end{itemize}
+
+  \indent 这些句子看起来都不错……除了最后一个。\footnote[1]{为此，请允许我在这里假定：豆腐不是一个人或者什么宠物的名字，它只是一块普通的，没有变异的，可以食用的豆腐！}
+  “舔”这个动作，它的发出者至少应该具有舌头或者类似的结构，而一块豆腐甚至连嘴都没有！\footnote[2]{虽然我们常说“豆腐嘴刀子心”，但这和豆腐有没有嘴没有任何关系！}
+
+  \indent 我们发现了：只有语法的话，我们的语言系统将会陷入混乱！
+  为了能够完全理解语言所要表达的东西，我们还需要另一个工具：语义（semantics）。
+  在计算机科学中，语义是对一个形式语言系统的解释。\cite{semwiki}
+  直观一点来说：语义解释了一段符合语法的程序应该如何运行，最终得到用户期望的输出。
+
+  \indent 有三种方法可以形式化地描述语义：\cite{tapl}
+
+  \begin{itemize}
+    \item 操作语义（Operational Semantics）：在操作语义中，我们将程序想象为一个状态机。语法中的项（也就是我们先前提到的符号，这里也称作term）就是状态机中的状态，每一次对项的变换等同于状态的转换；
+    \item 指称语义（Denotational Semantics）：指称语义比操作语义更加抽象。指称语义往往以数学对象为基础，研究如何将语法项映射到对应的语义定义域（semantic domains）上
+    \item 公理语义（Axiomatic Semantics）：公理语义将各种定律视作语言的定义，而语法项的运算则是这些定律的证明过程。
+  \end{itemize}
+
+  \indent 其中，操作语义凭借着其更加简洁和灵活的优势，
+  在程序的形式化描述中被广泛应用。\cite{tapl}
+  我们在下一节中也将更详细地介绍操作语义。
 
   \subsection{操作语义（Operational Semantics）}
   % TODO
@@ -157,11 +190,13 @@ else {
   \subsection{实例：一个只有整数加减法的语言}
   % TODO
 
-  \begin{thebibliography}{5}
+  \begin{thebibliography}{7}
     \bibitem{edu} 知乎专栏. 2018. 浅谈国内高校编程语言教育. [online] Available at: <\url{https://zhuanlan.zhihu.com/p/43914842}> [Accessed 2 October 2022].
     \bibitem{syntaxwiki} En.wikipedia.org. 2022. Syntax (programming languages) - Wikipedia. [online] Available at: <\url{https://en.wikipedia.org/wiki/Syntax_(programming_languages)}> [Accessed 2 October 2022].
     \bibitem{grammar} 王, 力., 2015. 中国语法理论. 中华书局, p.6.
     \bibitem{bnfwiki} Zh.wikipedia.org. 2020. 巴科斯范式 - 维基百科，自由的百科全书. [online] Available at: <\url{https://zh.wikipedia.org/zh-hans/%E5%B7%B4%E7%A7%91%E6%96%AF%E8%8C%83%E5%BC%8F}> [Accessed 2 October 2022]. 
     \bibitem{cfgwiki} Zh.wikipedia.org. 2021. 上下文无关文法 - 维基百科，自由的百科全书. [online] Available at: <\url{https://zh.wikipedia.org/zh-hans/%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E6%96%87%E6%B3%95}> [Accessed 2 October 2022].
+    \bibitem{semwiki} Zh.wikipedia.org. 2022. 语义学 - 维基百科，自由的百科全书. [online] Available at: <\url{https://zh.wikipedia.org/zh-cn/%E8%AF%AD%E4%B9%89%E5%AD%A6}> [Accessed 5 October 2022].
+    \bibitem{tapl} Pierce, B., 2002. Types and Programming Languages. London, England: The MIT Press, pp.32-34.
   \end{thebibliography}
 \end{document}
