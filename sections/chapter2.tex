@@ -175,9 +175,9 @@ else {
   \indent 有三种方法可以形式化地描述语义：\cite{tapl}
 
   \begin{itemize}
-    \item 操作语义（Operational Semantics）：在操作语义中，我们将程序想象为一个状态机。语法中的项（也就是我们先前提到的符号，这里也称作term）就是状态机中的状态，每一次对项的变换等同于状态的转换；
+    \item 操作语义（Operational Semantics）：在操作语义中，我们将程序想象为一个状态机，状态机的状态由语义项（term）构成。程序的最终结果即为状态机的停机状态；
     \item 指称语义（Denotational Semantics）：指称语义比操作语义更加抽象。指称语义往往以数学对象为基础，研究如何将语法项映射到对应的语义定义域（semantic domains）上；
-    \item 公理语义（Axiomatic Semantics）：公理语义将各种定律视作语言的定义，而语法项的运算则是这些定律的证明过程。
+    \item 公理语义（Axiomatic Semantics）：公理语义将各种定律视作语言的定义，而语义项的运算则是这些定律的证明过程。
   \end{itemize}
 
   \indent 其中，操作语义凭借着其更加简洁和灵活的优势，
@@ -185,12 +185,94 @@ else {
   我们在下一节中也将更详细地介绍操作语义。
 
   \subsection{操作语义（Operational Semantics）}
-  % TODO
+  \indent 相比另外两种语义，操作语义更加注重计算机程序本身执行的过程。
+  因此，根据“一口气究竟能执行多少步骤”的不同，操作语义还可以被细分为两个小类：\cite{opwiki}
 
-  \subsection{实例：一个只有整数加减法的语言}
-  % TODO
+  \begin{itemize}
+    \item 小步语义（small-step semantics）：又叫做结构化操作语义（structural operational semantics）。顾名思义，这类语义的执行步长非常小——每一次执行对应状态机的一次状态转移；
+    \item 大步语义（big-step semantics）：又叫做自然语义（natural semantics），这类语义通常更关注程序执行的整体结果，因而步长更大。
+  \end{itemize}
 
-  \begin{thebibliography}{7}
+  \indent 在研究学习中，小步语义是更加常用的选择：它通常意味着更多的细节，
+  对于形式化验证也更加方便。因此这里我们也以小步语义为重点。
+
+  \indent 一个小步语义的语义规则可以用如下的方式来表示：
+
+  $$\frac{premise}{operation}$$
+
+  \indent 横线上面是规则的前提，即该规则生效的前置条件；
+  横线下方是条件满足后所执行的操作。这样的一条语义规则可以读作“如果premise成立，那么执行operation”。
+  如果操作本身不需要前提条件，横线上方可以留空，甚至将横线也一同省去。
+
+  \indent 我们来看一些具体的例子。
+  在一些语言中，我们通常会见到像$x += 2$这样的语法。
+  事实上，这本质就是$x = x + 2$的语法糖。我们可以用操作语义来表示这个语法糖：
+
+  $$x += 2 \to x = x + 2$$
+
+  \indent 这个例子中，我们并没有任何需要满足的前提，因此我们省略了横线。
+  一个更复杂的例子是函数调用，例如绝对值函数abs。
+  在调用函数之前，我们需要先求出其参数的具体值。
+  例如：
+  
+\begin{lstlisting}[language=c]
+abs(3.14 * (-2));
+\end{lstlisting}
+
+  \indent 在函数内部，我们只会看见一个$-6.28$，而不是$3.14 * (-2)$。
+  我们也可以使用操作语义来描述这个步骤：
+
+  $$\frac{t_1 \to t_1'}{abs(t_1) \to abs(t_1')}$$
+
+  \indent 如果$t_1$可以被求值为$t_1'$，那么我们就需要在计算函数本身之前，
+  先将$t_1'$求出，然后才可以进行后续的计算。
+
+  \indent 你已经知道了如何描述一门语言的语法和语义了，
+  下面我们来看一个非常简单的例子。
+
+  \subsection{实例：if语言}
+  \indent 为了能更直观地了解语法和语义，我们准备了一个非常简单的语言：if语言。
+  \footnote[1]{这个语言的名字是我瞎起的，如有雷同纯属巧合！这个程序来自\cite{tapl}}
+  这门语言非常简单，我们来看一段小程序：
+
+\begin{lstlisting}[language=c++]
+if (true) (if (false) false else true) else true
+\end{lstlisting}
+
+  \indent 这门语言仅仅包含两个字面量：true和false，并且只有if/else一种运算。
+  因此我给它起名if语言。语言虽然简单，但是它足以撑起我们这个例子。我们来看看这个语言的语法：
+
+  \begin{eqnarray}
+    Start & ::= & Term \nonumber \\
+    Term & ::= & true\,|\,false\,|\,if(Term)\,Term\,else\,Term \nonumber
+  \end{eqnarray}
+
+  \indent 不错！语法非常简单！这个程序只能由一个语句构成：要么是显然的true或者false，
+  要么就是一串复杂的if运算。事实上，你会觉得第一个语法规则有些多余。
+  在后面的内容中，我们将总是假定程序只由一句话构成，从而省掉起始符号。
+  \footnote[2]{你可能会担心：一句话够我干什么？别急，后面你会看到，我们的程序比想象中更强大！:)}
+  \footnote[3]{这里我们依旧沿用语法分析常用的标记表示。在后面这样的标记会和类型系统的标记产生冲突，我们会在那时再进行调整。}
+
+  \indent 尽管我还没有解释，你也许已经知道了这个程序的语义是什么样的了。
+  让我帮你把它们写为对应的操作语义：
+
+  \begin{eqnarray}
+    & if (true)\, T_1\,else\,T_2 \to T_1 \nonumber \\
+    & if (false)\, T_1\,else\,T_2 \to T_2 \nonumber \\
+    & \frac{T_1 \to T_1'}{if(T_1)\,T_2\,else\,T_3 \to if(T_1')\,T_2\,else\,T_3} \nonumber
+  \end{eqnarray}
+
+  \indent 我们一共有三条语义规则。
+  前两条没有前提：一旦if中的部分恰好为true或者false，我们可以直接得出结论；
+  第三条稍微复杂一些：如果if中并不是true或者false，我们需要先化简if中的部分。
+  如果$T_1$可以被化简为$T_1'$，那么我们可以把整个if表达式由
+  $if(T_1)\,T_2\,else\,T_3$替换为$if(T_1')\,T_2\,else\,T_3$。
+
+  \indent 这样，我们就完成了对这个简单小语言的形式化表示！
+  你也可以试着描述一些你所熟知的语言。
+  在下一章，我们将以此为基础来介绍一个非常强大且通用的形式系统。
+
+  \begin{thebibliography}{8}
     \bibitem{edu} 知乎专栏. 2018. 浅谈国内高校编程语言教育. [online] Available at: <\url{https://zhuanlan.zhihu.com/p/43914842}> [Accessed 2 October 2022].
     \bibitem{syntaxwiki} En.wikipedia.org. 2022. Syntax (programming languages) - Wikipedia. [online] Available at: <\url{https://en.wikipedia.org/wiki/Syntax_(programming_languages)}> [Accessed 2 October 2022].
     \bibitem{grammar} 王, 力., 2015. 中国语法理论. 中华书局, p.6.
@@ -198,5 +280,6 @@ else {
     \bibitem{cfgwiki} Zh.wikipedia.org. 2021. 上下文无关文法 - 维基百科，自由的百科全书. [online] Available at: <\url{https://zh.wikipedia.org/zh-hans/%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E6%96%87%E6%B3%95}> [Accessed 2 October 2022].
     \bibitem{semwiki} Zh.wikipedia.org. 2022. 语义学 - 维基百科，自由的百科全书. [online] Available at: <\url{https://zh.wikipedia.org/zh-cn/%E8%AF%AD%E4%B9%89%E5%AD%A6}> [Accessed 5 October 2022].
     \bibitem{tapl} Pierce, B., 2002. Types and Programming Languages. London, England: The MIT Press, pp.32-34.
+    \bibitem{opwiki} En.wikipedia.org. 2022. Operational semantics - Wikipedia. [online] Available at: <\url{https://en.wikipedia.org/wiki/Operational_semantics}> [Accessed 19 October 2022].
   \end{thebibliography}
 \end{document}
