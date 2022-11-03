@@ -14,7 +14,8 @@ else {
 \end{lstlisting}
 
   \indent 这固然很好！非形式化的描述直观易懂。
-  非常可惜的是：非形式化的描述在我们后续的内容中并不好使。
+  非常可惜的是：非形式化的描述在我们后续的内容中将会给我们造成很大的麻烦：
+  我们可能在同一门语言上使用完全不同的描述方式；对于一种描述形式，大家也有可能会有完全不同的理解。
   为了严格证明我们所构造的类型系统的“正确性”（何为“正确的”类型系统，我们会在之后的章节中解释），
   我们需要使用形式化的方式来描述编程语言，即：用更“数学”的方式表示“这段代码要做什么”。
 
@@ -44,7 +45,7 @@ else {
   这就是一门语言的语法（grammar）。
   而上面的“主谓宾结构”构成了一条语法规则：
 
-  $$Sentence ::= (Subject) (verb) (Object)$$
+  $$Sentence ::= Subject\quad verb\quad Object$$
 
   \indent 这里，我们使用符号$::=$来表示一个语法的推导规则。
   这样的表示形式被称之为巴克斯范式（Backus Normal Form）。\cite{bnfwiki}
@@ -64,9 +65,13 @@ else {
     \begin{itemize}
       \item $Sentence ::= Subject\quad verb\quad Object$
       \item $Subject ::= pronoun$
-      \item $Object ::= article noun$
+      \item $Object ::= article\quad noun$
       \item $Object ::= pronoun$
     \end{itemize}
+
+    \indent 在这个语法中，我们的句子仅包含主语（Subject），
+    谓语（即动词，verb）和宾语（Object）。为了简化表述，我们认为主语只能是代词（pronoun）；
+    而宾语有两种情况：一是冠词（article）+名词（noun）的形式，二是直接使用代词。
 
     \indent 你可能已经发现了：有些符号的首字母是大写的（如$Subject$）；
     有些符号的首字母是小写的（如$verb$）。
@@ -92,7 +97,7 @@ else {
 
     \indent 在后文中，对于这样包含多个分支的语法规则，我们将写成以下的形式：
 
-    $$Object ::= article noun\,|\,pronoun$$
+    $$Object ::= article\quad noun\,|\,pronoun$$
 
     \indent 符号$|$表示“或”的意思。这表示左侧的非终结符可以推导为多种不同的形式（但不能是二者同时）。
     这样的表示方式更加紧凑，在计算机科学的文献或者工程项目中大量使用。
@@ -134,13 +139,23 @@ else {
 
   \subsubsection*{补充：其他的符号}
     \indent 我们已经见到了$|$和${}^*$这样的符号。
-    事实上，还有一些其他的符号可以用于语法描述
+    事实上，还有一些其他的符号可以用于语法描述。表1列出了这些符号和它们的含义。
 
-    \begin{itemize}
-      \item $\epsilon$是一个特殊的希腊字符，它被用来表示空白。$A ::= \epsilon$表示符号$A$会产生一个空串，我们可以将$bAb$推导为$bb$；
-      \item $\alpha+$：这里的加号表示$\alpha$可以出现任意非零次（1次，2次甚至更多，但不能不出现）。这与$\alpha\alpha*$是等价的；
-      \item $\alpha?$：这里的问号表示$\alpha$只能出现一次或者零次。它与$\alpha\,|\,\epsilon$是等价的。
-    \end{itemize}
+    \begin{table}[h!]
+      \centering
+      \begin{tabular}{|c|c|}
+        \hline
+        符号 & 描述\\
+        \hline
+        $\epsilon$ & 表示空字符串。如果$A ::= \epsilon$，我们可以将$bAb$推导为$bb$ \\
+        \hline
+        $\alpha+$ & 表示$\alpha$至少出现一次，与$\alpha\alpha*$等价 \\
+        \hline
+        $\alpha?$ & 表示$\alpha$只能出现一次或者零次,与$\alpha\,|\,\epsilon$等价 \\
+        \hline
+      \end{tabular}
+      \caption{语法符号补充}
+    \end{table}
 
     \indent 
 
