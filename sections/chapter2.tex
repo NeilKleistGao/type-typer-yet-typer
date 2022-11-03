@@ -187,12 +187,12 @@ else {
   在计算机科学中，语义是对一个形式语言系统的解释。\cite{semwiki}
   直观一点来说：语义解释了一段符合语法的程序应该如何运行，最终得到用户期望的输出。
 
-  \indent 有三种方法可以形式化地描述语义：\cite{tapl}
+  \indent 有三种方法可以形式化地描述语义：\cite{tapl}\cite{opwiki}
 
   \begin{itemize}
-    \item 操作语义（Operational Semantics）：在操作语义中，我们将程序想象为一个状态机，状态机的状态由语义项（term）构成。程序的最终结果即为状态机的停机状态；
-    \item 指称语义（Denotational Semantics）：指称语义比操作语义更加抽象。指称语义往往以数学对象为基础，研究如何将语法项映射到对应的语义定义域（semantic domains）上；
-    \item 公理语义（Axiomatic Semantics）：公理语义将各种定律视作语言的定义，而语义项的运算则是这些定律的证明过程。
+    \item 操作语义（Operational Semantics）：在操作语义中，我们更关心程序是如何被“操作”的。这些操作步骤往往被表示为一系列的推理规则；
+    \item 指称语义（Denotational Semantics）：指称语义比操作语义更加抽象。指称语义的研究对象为函数和域，程序的行为就是将输入映射到对应的输出的过程；
+    \item 公理语义（Axiomatic Semantics）：公理语义将程序中的命令视为对程序状态的断言，进而可以使用严格的数理逻辑来证明程序的正确性。
   \end{itemize}
 
   \indent 其中，操作语义凭借着其更加简洁和灵活的优势，
