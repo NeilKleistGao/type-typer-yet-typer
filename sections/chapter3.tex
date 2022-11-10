@@ -29,18 +29,136 @@
     
     \indent 在本章剩下的内容中，我们将讨论$\lambda$演算的基本语法和语义。
     为了不一次性灌输太多的内容，我们将从无类型的$\lambda$演算开始。
-    在理解了$\lambda$演算的基本概念后，我们再慢慢地将类型系统加上。
+    而有类型的$\lambda$演算将在下章展开。
 
   \subsection{无类型的Lambda演算}
+    \indent 让我们正式地开始介绍$\lambda$演算！
 
-  \subsection{究竟何为类型？}
+    \subsubsection*{函数}
+      \indent $\lambda$演算的核心在于“函数的抽象”（Abstraction）和“函数的应用”（Application）。
+      因此我们也从函数这个概念开始讲起。
+      $\lambda$演算的函数与数学概念上的函数更加接近：当函数的参数不变时，函数返回的结果也是不变的。
+      这意味着函数的调用不会依赖于某个“全局变量”，也不会修改某个变量的值（例如偷偷删掉你电脑上的某个文件）。
+      这个特性使得$\lambda$演算更加简洁且不容易出错，我们称之为无副作用（Side-Effects），无副作用的函数我们称之为纯函数\cite{dzwiki}。
+      我们使用$\lambda$来表示一个函数的定义\footnote[1]{这也是为什么我们称其为$\lambda$演算}，
+      例如这里的id函数，它接收一个参数并将其原封不动地返回回去：
 
-  \subsection{有类型的Lambda演算}
+      $$\lambda x. x$$
+      
+      \indent 我们在$\lambda$后紧跟一个变量名（我们通常称之为绑定变量），
+      并使用$.$来隔开参数和函数体。
+      如果用我们之前所学的BNF来表示，那么函数抽象就可以写成：
+
+      $$T ::= \lambda x. T\, | \, \dots$$
+
+      \indent 这里，我们使用$T$来表示所有的$\lambda$演算中的语法项。
+      如果你觉得这样不容易阅读，你当然可以通过添加括号的方式来完成。
+      $\lambda$演算也使用括号来确定运算的优先级：
+
+      $$T ::= (T)\, | \, \dots$$
+
+      \indent 你可能会问：每一个函数只能接收一个参数吗？
+      在此，我只能非常不幸地告诉你：没错。
+      不过好消息是我们依然有办法实现强大的功能。
+
+    \subsubsection*{函数应用}
+      \indent $\lambda$演算中的函数应用（如果你是一个C语言程序员，你也许更喜欢称之为函数调用，call）
+      是基于替换完成的。我们通过直接在函数项后跟上实际的参数来表示：
+
+      $$T ::= T\, T$$
+
+      \indent 为了更好地理解函数应用的逻辑，我们在此给出一个例子：
+
+      $$(\lambda x. x) (\lambda y. y)$$
+
+      \indent 在这个例子中，我们将id函数作用于其自身。
+      为了做出区别，我们在第二个id函数中使用了$y$作为变量名，而不是$x$。
+      事实上，这两个函数依旧是等价的：它们都还是id函数。这样的等价我们称之为$\alpha$等价：
+      即你可以随意替换$\lambda$抽象中变量的名字（只要不会产生冲突）\cite{lamwiki}。
+
+      \indent ……回到例子上来。我们要做的事情就是将$(\lambda x. x)$中的
+      所有$x$全部替换成$(\lambda y. y)$。
+      这也就是为什么我们称$x$为“绑定变量”：当我们使用这个函数时，
+      函数体内所有的$x$都会被替换为我们的参数值，即函数体内所有的$x$其实都是和$\lambda x$相关联的。
+      这个过程也被称为$\beta$规约\cite{lamwiki}，而未被绑定的变量我们称之为自由变量（Free Variables）。
+      对于这个例子来说，我们最后求值的结果就是$(\lambda y. y)$。
+
+      \indent 我们可以使用操作语义来表示这个过程。
+      在操作语义中，我们使用$[x \mapsto y]T$来表示将某个项$T$中的所有$x$全部替换为$y$。
+      那么对于函数应用，我们的语义就可以写成：
+
+      $$(\lambda x. T_1) T_2 \to [x \mapsto T_2]T_1$$
+
+      \indent 最后一个问题：当传递给函数的参数也可以进行$beta$规约时，我们应该优先规约哪一个？
+      在一些其他的语言（如C语言中），答案自然是需要先规约参数。
+      不过在$\lambda$演算中，我们将直接对函数调用本身进行规约：因为我们并不确定这个参数是否真的会被函数体所使用，
+      提前规约的话，这一步可能就白做了。这样的求值方式也被称之为惰性求值（Lazy Evaluation）\cite{lazywiki}。
+      
+    \subsubsection*{变量的运算}
+      \indent 我知道你在等这个部分已经等了很久了。
+      你已经迫不及待地想要看到诸如$a = 42; a *= 2$这样让你感到熟悉的运算了。
+      不过我们要就此道歉：$\lambda$演算的“变量”并不是实际意义上的“变量”，而是“常量”。
+      所有的变量都是不可修改的。
+
+    \subsubsection*{柯里化与反柯里化}
+      \indent 最后，让我们来解决一下我们在本节开头提出的一个问题：
+      我想让我的函数可以接收多个参数，怎么办？
+
+      \indent 我们来观察这个TypeScript函数：
+
+\begin{lstlisting}[language=TypeScript]
+function add(x: number, y: number): number {
+  return x + y;
+}
+\end{lstlisting}
+
+      \indent 这个函数接收两个参数，看似无法使用$\lambda$演算来表示，不是么？
+      不过，如果我已经知道了加法中的其中一个数字：$42$，此时这个函数应该是什么样的？
+
+\begin{lstlisting}[language=TypeScript]
+function add42(y: number): number {
+  return 42 + y;
+}
+\end{lstlisting}
+
+      \indent 哦？这个函数现在只需要一个参数就可以进行运算了！
+      那么，我们为什么不先接收一个参数，再用这个参数创建另一个“接收一个参数的函数”作为返回值呢？
+      事实上，这个思想正是大名鼎鼎的函数柯里化（Currying）。
+      基于柯里化，我们可以将一个接收多个参数的函数化简为多个只需要一个参数的函数。
+      这个做法允许我们进行部分求值（Partial Evaluation）。同时，我们也可以将这些函数再反推回去，
+      这个过程被称为反柯里化（Uncurrying）\cite{currywiki}。
+      柯里化能够成功实现，得益于我们可以在$\lambda$演算中自由地将函数作为参数或者返回值进行操作。
+      这样可以接收函数为参数，或者返回一个函数的函数，我们称为高阶函数（Higher-Order Function）\cite{highwiki}。
+
+    \subsubsection*{总结}
+      \indent 我们看到了$\lambda$演算具有这些有趣的特性：
+
+      \begin{itemize}
+        \item 支持高阶函数
+        \item 只有常量没有变量
+        \item 无副作用的纯函数
+        \item ……
+      \end{itemize}
+
+      \indent 凡是具有这些特性的语言，我们都统称为函数式编程语言（Functional Programming Languages）。
+      其中最具代表性的语言包括Lisp和Haskell；与之相对的语言我们称为指令式编程语言（Imperative Programming Languages），
+      我们所熟悉的C和Java等语言都是指令式编程。
+      函数式语言相比指令式语言具有更高的抽象程度，但相对应的性能上会有一些损失\footnote[1]{因此有很多计算机科学家在研究如何保持高度抽象的同时减少性能开销}。
+      
+      \indent 许多语言作为指令式语言（如JavaScript），本身也支持高阶函数。只要程序员使用得当的话，
+      其也可以被当作函数式语言使用。
+
+  \subsection{我的字面量在哪？}
 
   \subsection{我们是对的吗？}
 
-  \begin{thebibliography}{1}
-    \bibitem{lamwiki} Zh.wikipedia.org. 2022. λ演算 - 维基百科，自由的百科全书. [online] Available at: <\url{https://zh.wikipedia.org/wiki/%CE%9B%E6%BC%94%E7%AE%97}> [Accessed 3 November 2022]. 
+  \begin{thebibliography}{6}
+    \bibitem{lamwiki} Zh.wikipedia.org. 2022. Lambda演算 - 维基百科，自由的百科全书. [online] Available at: <\url{https://zh.wikipedia.org/wiki/%CE%9B%E6%BC%94%E7%AE%97}> [Accessed 3 November 2022]. 
+    \bibitem{dzwiki} Zh.wikipedia.org. 2022. 纯函数 - 维基百科，自由的百科全书. [online] Available at: <\url{https://zh.wikipedia.org/zh-cn/%E7%BA%AF%E5%87%BD%E6%95%B0}> [Accessed 10 November 2022]. 
+    \bibitem{tapl} Pierce, B., 2002. Types and Programming Languages. London, England: The MIT Press, pp.72-73.
+    \bibitem{lazywiki} Zh.wikipedia.org. 2022. 惰性求值 - 维基百科，自由的百科全书. [online] Available at: <\url{https://zh.wikipedia.org/zh-cn/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC}> [Accessed 10 November 2022]. 
+    \bibitem{currywiki} Zh.wikipedia.org. 2022. 柯里化 - 维基百科，自由的百科全书. [online] Available at: <\url{https://zh.wikipedia.org/zh-cn/%E6%9F%AF%E9%87%8C%E5%8C%96}> [Accessed 10 November 2022]. 
+    \bibitem{highwiki} Zh.wikipedia.org. 2022. 高阶函数 - 维基百科，自由的百科全书. [online] Available at: <\url{https://zh.wikipedia.org/zh-cn/%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0}> [Accessed 10 November 2022]. 
   \end{thebibliography}
 
 \end{document}
